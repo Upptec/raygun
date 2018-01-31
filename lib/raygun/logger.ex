@@ -1,5 +1,5 @@
 defmodule Raygun.Logger do
-  use GenEvent
+  @behaviour :gen_event
 
   @moduledoc """
   This provides a backend for Logger that will send any messages logged at
@@ -24,7 +24,20 @@ defmodule Raygun.Logger do
     end
     {:ok, state}
   end
-  def handle_event(_data, state) do
+  def handle_event(_, state) do
     {:ok, state}
   end
+
+  def handle_info(_, state) do
+    {:ok, state}
+  end
+
+  def code_change(_old_vsn, state, _extra) do
+    {:ok, state}
+  end
+
+  def terminate(_reason, _state) do
+    :ok
+  end
+
 end
