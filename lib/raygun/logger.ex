@@ -6,6 +6,10 @@ defmodule Raygun.Logger do
   :error to Raygun.
   """
 
+  def init(state) do
+    {:ok, state}
+  end
+
   @doc """
   Our module doesn't require any custom configuration, so just return the state.
   """
