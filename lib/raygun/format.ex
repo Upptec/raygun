@@ -16,14 +16,15 @@ defmodule Raygun.Format do
     message_payload(msg_as_string, opts)
   end
   def message_payload(msg, opts) do
+    msg_without_pid = remove_pid(msg)
     %{
-      occurredOn: now,
+      occurredOn: now(),
       details:
         details
         |> Map.merge( environment )
         |> Map.merge( user(opts) )
         |> Map.merge( custom(opts) )
-        |> Map.merge( %{error: %{ message: msg } } )
+        |> Map.merge( %{error: %{ message: msg_without_pid } } )
     }
   end
 
@@ -200,5 +201,11 @@ defmodule Raygun.Format do
       methodName: Raygun.Util.function_and_arity(function,arity_or_args)
     }
   end
+
+  defp remove_pid(msg) when is_binary(msg) do
+    r = ~r/#PID<\d+\.\d+\.\d+>\s?/
+    String.replace(msg, r, "")
+  end
+  defp remove_pid(msg), do: msg
 
 end
