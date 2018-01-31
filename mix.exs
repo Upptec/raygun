@@ -4,22 +4,22 @@ defmodule Raygun.Mixfile do
   def project do
     [app: :raygun,
      version: "0.3.2",
-     elixir: "~> 1.3",
+     elixir: "~> 1.5",
      source_url: "https://github.com/cobenian/raygun",
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
-     description: description,
-     package: package,
+     description: description(),
+     package: package(),
      test_coverage: [tool: ExCoveralls],
-     preferred_cli_env: preferred_cli_env,
-     deps: deps]
+     preferred_cli_env: preferred_cli_env(),
+     deps: deps()]
   end
 
   # Configuration for the OTP application
   #
   # Type `mix help compile.app` for more information
   def application do
-    [applications: [:logger, :httpoison, :plug, :poison]]
+    [extra_applications: [:logger]]
   end
 
   defp description do
@@ -31,7 +31,7 @@ defmodule Raygun.Mixfile do
     """
   end
 
-  defp preferred_cli_env do
+  defp preferred_cli_env() do
     [
       "coveralls": :test,
       "coveralls.detail": :test,
@@ -49,11 +49,11 @@ defmodule Raygun.Mixfile do
   #   {:mydep, git: "https://github.com/elixir-lang/mydep.git", tag: "0.1.0"}
   #
   # Type `mix help deps` for more examples and options
-  defp deps do
+  defp deps() do
     [
-      {:poison, "~> 2.0 or ~> 1.0"},
-      {:httpoison, "~> 0.8"},
-      {:plug, "~> 1.1"},
+      {:poison, "~> 3.1"},
+      {:httpoison, "~> 1.0"},
+      {:plug, "~> 1.4"},
       {:earmark, "~> 0.2", only: :dev},
       {:ex_doc, "~> 0.11", only: :dev},
       {:meck, "~> 0.8", only: :test},
@@ -61,7 +61,7 @@ defmodule Raygun.Mixfile do
     ]
   end
 
-  defp package do
+  defp package() do
     [# These are the default files included in the package
      maintainers: ["Bryan Weber"],
      licenses: ["Apache 2.0"],
