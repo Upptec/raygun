@@ -34,7 +34,7 @@ defmodule Raygun.Format do
   """
   def stacktrace_payload(stacktrace, exception, opts) do
     %{
-      occurredOn: now,
+      occurredOn: now(),
       details:
         details
         |> Map.merge( err(stacktrace, exception) )
@@ -50,7 +50,7 @@ defmodule Raygun.Format do
   """
   def conn_payload(conn, stacktrace, exception, opts) do
     %{
-      occurredOn: now,
+      occurredOn: now(),
       details:
         details(opts)
         |> Map.merge( err(stacktrace, exception) )
@@ -135,7 +135,7 @@ defmodule Raygun.Format do
     }
   end
 
-  defp now, do: DateTime.utc_now |> DateTime.to_iso8601
+  defp now(), do: DateTime.utc_now |> DateTime.to_iso8601
 
   @doc """
   Given a Plug Conn return a map containing information about the request.
@@ -168,12 +168,13 @@ defmodule Raygun.Format do
   Given a stacktrace and an exception, return a map with the error data.
   """
   def err(stacktrace, error) do
+    msg = remove_pid(Exception.message(error))
     s0 = Enum.at(stacktrace, 0) |> stacktrace_entry
     %{error: %{
         innerError: nil,
         data: %{fileName: s0.fileName, lineNumber: s0.lineNumber, function: s0.methodName},
         className: s0.className,
-        message: Exception.message(error),
+        message: msg,
         stackTrace: stacktrace(stacktrace)
       }
     }
@@ -203,8 +204,8 @@ defmodule Raygun.Format do
   end
 
   defp remove_pid(msg) when is_binary(msg) do
-    r = ~r/#PID<\d+\.\d+\.\d+>\s?/
-    String.replace(msg, r, "")
+    r = ~r/#PID<\d+\.\d+\.\d+>/
+    String.replace(msg, r, "#PID<removed>")
   end
   defp remove_pid(msg), do: msg
 
